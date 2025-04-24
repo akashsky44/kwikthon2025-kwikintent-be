@@ -1,0 +1,459 @@
+{
+    "info": {
+        "_postman_id": "1234-5678-9abc-def0",
+        "name": "KwikIntent API",
+        "description": "API collection for KwikIntent backend services",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "login"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"demo@example.com\",\n  \"password\": \"demo123\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Analytics",
+            "item": [
+                {
+                    "name": "Get Overview",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/analytics/overview",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "analytics",
+                                "overview"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Dashboard",
+            "item": [
+                {
+                    "name": "Get Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/dashboard/stats",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "dashboard",
+                                "stats"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Checkout Factors",
+            "item": [
+                {
+                    "name": "Create Checkout Factor",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/checkout-factors",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "checkout-factors"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"factorType\": \"payment-friction\",\n  \"name\": \"Payment Friction\",\n  \"description\": \"Factors affecting payment completion\",\n  \"impact\": 75,\n  \"enabled\": true,\n  \"intentStrategies\": [\n    {\n      \"intentType\": \"high-intent\",\n      \"enabled\": true,\n      \"strategy\": \"prepaid-incentives\"\n    }\n  ],\n  \"strategies\": {\n    \"prepaidIncentives\": {\n      \"name\": \"Prepaid Payment Incentives\",\n      \"description\": \"Offer incentives for prepaid payments\",\n      \"enabled\": true,\n      \"value\": \"5% discount on prepaid orders\"\n    }\n  }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Get All Checkout Factors",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/checkout-factors",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "checkout-factors"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Configuration",
+            "item": [
+                {
+                    "name": "Get Configuration",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/configuration",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "configuration"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Configuration",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/configuration",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "configuration"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"intentTypes\": {\n    \"highIntent\": {\n      \"threshold\": 70,\n      \"behavioralSignals\": []\n    },\n    \"priceSensitive\": {\n      \"threshold\": 50,\n      \"behavioralSignals\": []\n    }\n  },\n  \"checkoutFactors\": {\n    \"paymentMethods\": [],\n    \"shippingOptions\": []\n  },\n  \"widgetSettings\": {\n    \"highIntent\": {\n      \"type\": \"urgency\",\n      \"content\": {}\n    }\n  }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Intent Rules",
+            "item": [
+                {
+                    "name": "Get All Intent Rules",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/intent-rules",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "intent-rules"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Intent Rule",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/intent-rules",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "intent-rules"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"intentType\": \"high-intent\",\n  \"threshold\": 70,\n  \"behavioralSignals\": [\n    {\n      \"name\": \"timeOnPage\",\n      \"description\": \"User spends significant time on product page\",\n      \"enabled\": true,\n      \"weight\": 3,\n      \"threshold\": 120\n    }\n  ]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Merchants",
+            "item": [
+                {
+                    "name": "Create Merchant",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/merchants",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "merchants"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Test Store\",\n  \"domain\": \"test-store.myshopify.com\",\n  \"platform\": \"shopify\",\n  \"settings\": {\n    \"widgetPlacement\": \"below-price\",\n    \"intentThresholds\": {\n      \"highIntent\": 70,\n      \"priceSensitive\": 50\n    }\n  }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Update Merchant Settings",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/merchants/{{merchantId}}/settings",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "merchants",
+                                "{{merchantId}}",
+                                "settings"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"settings\": {\n    \"widgetPlacement\": \"above-add-to-cart\",\n    \"intentThresholds\": {\n      \"highIntent\": 75,\n      \"priceSensitive\": 55\n    }\n  }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Widgets",
+            "item": [
+                {
+                    "name": "Get All Widgets",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/widgets",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "widgets"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Widget",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/widgets",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "widgets"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"intentType\": \"high-intent\",\n  \"widgetType\": \"urgency\",\n  \"name\": \"High Intent Urgency Widget\",\n  \"content\": {\n    \"title\": \"Limited Time Offer!\",\n    \"message\": \"Only {stock} left in stock!\",\n    \"additionalText\": \"Order now!\"\n  },\n  \"styling\": {\n    \"position\": \"below-price\",\n    \"colors\": {\n      \"background\": \"#fff5f7\",\n      \"text\": \"#e53e3e\",\n      \"accent\": \"#e53e3e\"\n    }\n  },\n  \"settings\": {\n    \"showCountdown\": true,\n    \"countdownDuration\": 900\n  }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Public",
+            "item": [
+                {
+                    "name": "Poll User Behavior",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/public/pdp/poll/{{merchantId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "public",
+                                "pdp",
+                                "poll",
+                                "{{merchantId}}"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"visitorId\": \"v_test123\",\n  \"sessionId\": \"s_test456\",\n  \"product\": {\n    \"id\": \"prod_789\",\n    \"name\": \"Test Product\",\n    \"url\": \"/products/test-product\",\n    \"price\": 99.99,\n    \"currency\": \"USD\"\n  },\n  \"behavioralSignals\": {\n    \"timeOnPage\": 180,\n    \"scrollDepth\": 85,\n    \"imageViews\": 4,\n    \"addToCartHover\": true\n  },\n  \"deviceInfo\": {\n    \"type\": \"desktop\",\n    \"userAgent\": \"Mozilla/5.0\",\n    \"screenSize\": \"1920x1080\"\n  }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:3000"
+        },
+        {
+            "key": "authToken",
+            "value": "your_jwt_token_here"
+        },
+        {
+            "key": "merchantId",
+            "value": "your_merchant_id_here"
+        }
+    ]
+}

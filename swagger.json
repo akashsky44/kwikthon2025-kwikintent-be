@@ -1,0 +1,728 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "KwikIntent API",
+        "version": "1.0.0",
+        "description": "API documentation for KwikIntent backend services"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000/api",
+            "description": "Development server"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        },
+        "schemas": {
+            "Error": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "errors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "LoginRequest": {
+                "type": "object",
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password"
+                    }
+                }
+            },
+            "LoginResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "token": {
+                        "type": "string"
+                    }
+                }
+            },
+            "PollRequest": {
+                "type": "object",
+                "required": [
+                    "visitorId",
+                    "sessionId",
+                    "product",
+                    "behavioralSignals",
+                    "deviceInfo"
+                ],
+                "properties": {
+                    "visitorId": {
+                        "type": "string"
+                    },
+                    "sessionId": {
+                        "type": "string"
+                    },
+                    "product": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "url": {
+                                "type": "string"
+                            },
+                            "price": {
+                                "type": "number"
+                            },
+                            "currency": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "behavioralSignals": {
+                        "type": "object",
+                        "properties": {
+                            "timeOnPage": {
+                                "type": "number"
+                            },
+                            "scrollDepth": {
+                                "type": "number"
+                            },
+                            "imageViews": {
+                                "type": "number"
+                            },
+                            "addToCartHover": {
+                                "type": "boolean"
+                            }
+                        }
+                    },
+                    "deviceInfo": {
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "type": "string"
+                            },
+                            "userAgent": {
+                                "type": "string"
+                            },
+                            "screenSize": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "PollResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "data": {
+                        "type": "object",
+                        "properties": {
+                            "intentType": {
+                                "type": "string",
+                                "enum": [
+                                    "high-intent",
+                                    "price-sensitive",
+                                    "just-browsing"
+                                ]
+                            },
+                            "intentScore": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 100
+                            },
+                            "widget": {
+                                "$ref": "#/components/schemas/Widget"
+                            }
+                        }
+                    }
+                }
+            },
+            "AnalyticsOverview": {
+                "type": "object",
+                "properties": {
+                    "totalDetections": {
+                        "type": "number"
+                    },
+                    "conversionRate": {
+                        "type": "number"
+                    },
+                    "intentDistribution": {
+                        "type": "object"
+                    }
+                }
+            },
+            "DashboardStats": {
+                "type": "object",
+                "properties": {
+                    "recentDetections": {
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    },
+                    "widgetPerformance": {
+                        "type": "object"
+                    }
+                }
+            },
+            "CheckoutFactor": {
+                "type": "object",
+                "properties": {
+                    "factorType": {
+                        "type": "string",
+                        "enum": [
+                            "payment-friction",
+                            "shipping-concerns",
+                            "trust-concerns",
+                            "price-sensitivity",
+                            "urgency",
+                            "social-proof"
+                        ]
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "impact": {
+                        "type": "number"
+                    },
+                    "enabled": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "Configuration": {
+                "type": "object",
+                "properties": {
+                    "intentTypes": {
+                        "type": "object"
+                    },
+                    "checkoutFactors": {
+                        "type": "object"
+                    },
+                    "widgetSettings": {
+                        "type": "object"
+                    }
+                }
+            },
+            "IntentRule": {
+                "type": "object",
+                "properties": {
+                    "intentType": {
+                        "type": "string",
+                        "enum": [
+                            "high-intent",
+                            "price-sensitive",
+                            "just-browsing"
+                        ]
+                    },
+                    "threshold": {
+                        "type": "number"
+                    },
+                    "behavioralSignals": {
+                        "type": "array"
+                    }
+                }
+            },
+            "Merchant": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "domain": {
+                        "type": "string"
+                    },
+                    "platform": {
+                        "type": "string",
+                        "enum": [
+                            "shopify",
+                            "woocommerce",
+                            "magento",
+                            "custom"
+                        ]
+                    },
+                    "settings": {
+                        "type": "object"
+                    }
+                }
+            },
+            "Widget": {
+                "type": "object",
+                "properties": {
+                    "intentType": {
+                        "type": "string",
+                        "enum": [
+                            "high-intent",
+                            "price-sensitive",
+                            "just-browsing"
+                        ]
+                    },
+                    "widgetType": {
+                        "type": "string",
+                        "enum": [
+                            "urgency",
+                            "discount",
+                            "social-proof",
+                            "recommendation"
+                        ]
+                    },
+                    "content": {
+                        "type": "object"
+                    },
+                    "styling": {
+                        "type": "object"
+                    },
+                    "settings": {
+                        "type": "object"
+                    }
+                }
+            }
+        }
+    },
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Login user",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/analytics/overview": {
+            "get": {
+                "tags": [
+                    "Analytics"
+                ],
+                "summary": "Get analytics overview",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Analytics overview",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AnalyticsOverview"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/dashboard/stats": {
+            "get": {
+                "tags": [
+                    "Dashboard"
+                ],
+                "summary": "Get dashboard statistics",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dashboard statistics",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DashboardStats"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/checkout-factors": {
+            "post": {
+                "tags": [
+                    "Checkout Factors"
+                ],
+                "summary": "Create checkout factor",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CheckoutFactor"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Checkout factor created"
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Checkout Factors"
+                ],
+                "summary": "Get all checkout factors",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of checkout factors",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/CheckoutFactor"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/configuration": {
+            "get": {
+                "tags": [
+                    "Configuration"
+                ],
+                "summary": "Get configuration",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Configuration settings",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Configuration"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Configuration"
+                ],
+                "summary": "Update configuration",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Configuration"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Configuration updated"
+                    }
+                }
+            }
+        },
+        "/intent-rules": {
+            "get": {
+                "tags": [
+                    "Intent Rules"
+                ],
+                "summary": "Get all intent rules",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of intent rules",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/IntentRule"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Intent Rules"
+                ],
+                "summary": "Create intent rule",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/IntentRule"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Intent rule created"
+                    }
+                }
+            }
+        },
+        "/merchants": {
+            "post": {
+                "tags": [
+                    "Merchants"
+                ],
+                "summary": "Create merchant",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Merchant"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Merchant created"
+                    }
+                }
+            }
+        },
+        "/merchants/{merchantId}/settings": {
+            "put": {
+                "tags": [
+                    "Merchants"
+                ],
+                "summary": "Update merchant settings",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "merchantId",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "settings": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Settings updated"
+                    }
+                }
+            }
+        },
+        "/widgets": {
+            "get": {
+                "tags": [
+                    "Widgets"
+                ],
+                "summary": "Get all widgets",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of widgets",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Widget"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Widgets"
+                ],
+                "summary": "Create widget",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Widget"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Widget created"
+                    }
+                }
+            }
+        },
+        "/public/pdp/poll/{merchantId}": {
+            "post": {
+                "tags": [
+                    "PDP"
+                ],
+                "summary": "Poll for user intent and get widget",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "merchantId",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PollRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Intent analysis successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PollResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

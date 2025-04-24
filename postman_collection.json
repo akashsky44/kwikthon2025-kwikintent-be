@@ -1,0 +1,173 @@
+{
+    "info": {
+        "name": "KwikIntent API",
+        "description": "API collection for KwikIntent backend services",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{baseUrl}}/api/auth/login",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Merchants",
+            "item": [
+                {
+                    "name": "Create Merchant",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{baseUrl}}/api/merchants",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Test Store\",\n  \"domain\": \"test-store.myshopify.com\",\n  \"platform\": \"shopify\",\n  \"apiKey\": \"test_api_key\",\n  \"apiSecret\": \"test_api_secret\",\n  \"settings\": {\n    \"widgetPlacement\": \"below-price\",\n    \"intentThresholds\": {\n      \"highIntent\": 70,\n      \"priceSensitive\": 50,\n      \"justBrowsing\": 30\n    },\n    \"widgetStyles\": {\n      \"colors\": {\n        \"primary\": \"#e53e3e\",\n        \"secondary\": \"#fff5f7\",\n        \"text\": \"#1a202c\"\n      },\n      \"fonts\": {\n        \"family\": \"system-ui\",\n        \"size\": \"14px\"\n      }\n    },\n    \"features\": {\n      \"stockCounter\": true,\n      \"countdown\": true,\n      \"socialProof\": true,\n      \"recentActivity\": true\n    }\n  }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Get Merchant Settings",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/api/merchants/{{merchantId}}/settings",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "Update Merchant Settings",
+                    "request": {
+                        "method": "PUT",
+                        "url": "{{baseUrl}}/api/merchants/{{merchantId}}/settings",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"widgetPlacement\": \"above-add-to-cart\",\n  \"intentThresholds\": {\n    \"highIntent\": 75,\n    \"priceSensitive\": 55,\n    \"justBrowsing\": 35\n  },\n  \"widgetStyles\": {\n    \"colors\": {\n      \"primary\": \"#2b6cb0\",\n      \"secondary\": \"#ebf8ff\",\n      \"text\": \"#2d3748\"\n    },\n    \"fonts\": {\n      \"family\": \"Inter, system-ui\",\n      \"size\": \"16px\"\n    }\n  },\n  \"features\": {\n    \"stockCounter\": true,\n    \"countdown\": true,\n    \"socialProof\": true,\n    \"recentActivity\": false\n  }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "PDP",
+            "item": [
+                {
+                    "name": "Poll User Intent",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{baseUrl}}/api/public/pdp/poll/{{userId}}",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"visitorId\": \"v_test123\",\n  \"sessionId\": \"s_test456\",\n  \"product\": {\n    \"id\": \"prod_789\",\n    \"name\": \"Test Product\",\n    \"url\": \"/products/test-product\",\n    \"price\": 99.99,\n    \"currency\": \"USD\"\n  },\n  \"behavioralSignals\": {\n    \"timeOnPage\": 180,\n    \"scrollDepth\": 85,\n    \"imageViews\": 4,\n    \"addToCartHover\": true,\n    \"priceViewDuration\": 10,\n    \"comparisonViews\": false,\n    \"previousAbandonment\": false,\n    \"exitOnCheckout\": false,\n    \"productInteraction\": true,\n    \"categoryViews\": 1\n  },\n  \"deviceInfo\": {\n    \"type\": \"desktop\",\n    \"userAgent\": \"Mozilla/5.0\",\n    \"screenSize\": \"1920x1080\"\n  }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Widgets",
+            "item": [
+                {
+                    "name": "Create Widget",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{baseUrl}}/api/widgets",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"intentType\": \"high-intent\",\n  \"widgetType\": \"urgency\",\n  \"name\": \"High Intent Urgency Widget\",\n  \"content\": {\n    \"title\": \"Limited Time Offer!\",\n    \"message\": \"Only {stock} left in stock!\",\n    \"additionalText\": \"Order now before stock runs out!\"\n  },\n  \"styling\": {\n    \"position\": \"below-price\",\n    \"colors\": {\n      \"background\": \"#fff5f7\",\n      \"text\": \"#e53e3e\",\n      \"accent\": \"#e53e3e\"\n    },\n    \"showIcons\": true\n  },\n  \"settings\": {\n    \"showCountdown\": true,\n    \"countdownDuration\": 900,\n    \"showStockLevel\": true,\n    \"showRecentActivity\": true\n  }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Configuration",
+            "item": [
+                {
+                    "name": "Update Intent Rules",
+                    "request": {
+                        "method": "PUT",
+                        "url": "{{baseUrl}}/api/configuration/intent-rules/highIntent",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"threshold\": 70,\n  \"behavioralSignals\": [\n    {\n      \"name\": \"timeOnPage\",\n      \"description\": \"User spends significant time on product page\",\n      \"enabled\": true,\n      \"weight\": 3,\n      \"threshold\": 120\n    },\n    {\n      \"name\": \"scrollDepth\",\n      \"description\": \"User scrolls to product details and reviews\",\n      \"enabled\": true,\n      \"weight\": 2,\n      \"threshold\": 80\n    },\n    {\n      \"name\": \"imageViews\",\n      \"description\": \"User views multiple product images\",\n      \"enabled\": true,\n      \"weight\": 2,\n      \"threshold\": 3\n    },\n    {\n      \"name\": \"addToCartHover\",\n      \"description\": \"User hovers over add to cart button\",\n      \"enabled\": true,\n      \"weight\": 3,\n      \"threshold\": 1\n    }\n  ],\n  \"historicalFactors\": [\n    {\n      \"name\": \"previousPurchaseHistory\",\n      \"description\": \"User has purchased similar items before\",\n      \"enabled\": true,\n      \"weight\": 3\n    }\n  ],\n  \"deviceContext\": [\n    {\n      \"name\": \"deviceType\",\n      \"description\": \"Consider user device type\",\n      \"enabled\": true,\n      \"weight\": 1\n    }\n  ]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:3000"
+        }
+    ]
+}

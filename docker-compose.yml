@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  api:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - MONGODB_URI=mongodb://mongo:27017/kwikintent
+      - JWT_SECRET=your-secret-key-here
+      - JWT_EXPIRES_IN=1d
+      - CORS_ORIGIN=http://localhost:3000
+    depends_on:
+      - mongo
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:4.4
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
