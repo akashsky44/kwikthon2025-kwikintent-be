@@ -1,11 +1,11 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+require("dotenv").config();
 const swaggerUi = require("swagger-ui-express");
-const swaggerDocument = require("./swagger.json");
+const swaggerDocument = require("./swagger");
 const routes = require("./routes");
 const { errorHandler } = require("./middleware/errorHandler");
-require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -40,6 +40,6 @@ const environment = process.env.NODE_ENV || "development";
 app.listen(PORT, () => {
   console.log(`Server running in ${environment} mode on port ${PORT}`);
   console.log(
-    `API Documentation available at http://localhost:${PORT}/api-docs`
+    `API Documentation available at ${process.env.API_HOST}/api-docs`
   );
 });

@@ -20,6 +20,11 @@ const userSchema = new mongoose.Schema({
     minlength: [6, "Password must be at least 6 characters long"],
     select: false,
   },
+  merchant: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Merchant",
+    required: [true, "Merchant ID is required"],
+  },
   role: {
     type: String,
     enum: ["user", "admin"],
@@ -47,9 +52,17 @@ userSchema.methods.comparePassword = async function (enteredPassword) {
 
 // Generate JWT token
 userSchema.methods.getSignedToken = function () {
-  return jwt.sign({ id: this._id, role: this.role }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE,
-  });
+  return jwt.sign(
+    {
+      id: this._id,
+      role: this.role,
+      merchant: this.merchant,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_EXPIRE,
+    }
+  );
 };
 
 module.exports = mongoose.model("User", userSchema);

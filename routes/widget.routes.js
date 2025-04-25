@@ -1,31 +1,50 @@
 const express = require("express");
 const router = express.Router();
+const { authenticate, checkMerchantAccess } = require("../middleware/auth");
 const widgetController = require("../controllers/widget.controller");
 
+// Apply authentication and merchant access check to all routes
+router.use(authenticate);
+router.use(checkMerchantAccess);
+
 // CRUD operations
-router.post("/", widgetController.createWidget);
-router.get("/", widgetController.getAllWidgets);
-router.get("/:id", widgetController.getWidgetById);
-router.put("/:id", widgetController.updateWidget);
-router.delete("/:id", widgetController.deleteWidget);
+router
+  .route("/")
+  .post(widgetController.createWidget)
+  .get(widgetController.getAllWidgets);
+
+router
+  .route("/:id")
+  .get(widgetController.getWidgetById)
+  .put(widgetController.updateWidget)
+  .delete(widgetController.deleteWidget);
 
 // Widget management
-router.put("/:id/activate", widgetController.activateWidget);
-router.put("/:id/deactivate", widgetController.deactivateWidget);
-router.put("/:id/display-rules", widgetController.updateDisplayRules);
+router.route("/:id/activate").put(widgetController.activateWidget);
+
+router.route("/:id/deactivate").put(widgetController.deactivateWidget);
+
+router.route("/:id/display-rules").put(widgetController.updateDisplayRules);
 
 // Analytics
-router.get("/:id/performance", widgetController.getWidgetPerformance);
-router.get("/:id/interactions", widgetController.getWidgetInteractions);
-router.get("/:id/conversion-rate", widgetController.getWidgetConversionRate);
+router.route("/:id/performance").get(widgetController.getWidgetPerformance);
+
+router.route("/:id/interactions").get(widgetController.getWidgetInteractions);
+
+router
+  .route("/:id/conversion-rate")
+  .get(widgetController.getWidgetConversionRate);
 
 // Bulk operations
-router.post("/bulk-create", widgetController.createMultipleWidgets);
-router.put("/bulk-update", widgetController.updateMultipleWidgets);
-router.delete("/bulk-delete", widgetController.deleteMultipleWidgets);
+router.route("/bulk-create").post(widgetController.createMultipleWidgets);
+
+router.route("/bulk-update").put(widgetController.updateMultipleWidgets);
+
+router.route("/bulk-delete").delete(widgetController.deleteMultipleWidgets);
 
 // Testing
-router.post("/:id/test", widgetController.testWidget);
-router.get("/:id/preview", widgetController.previewWidget);
+router.route("/:id/test").post(widgetController.testWidget);
+
+router.route("/:id/preview").get(widgetController.previewWidget);
 
 module.exports = router;

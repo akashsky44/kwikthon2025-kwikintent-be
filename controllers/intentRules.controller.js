@@ -6,7 +6,8 @@ const { ApiError } = require("../utils/errors");
 // @access  Private
 exports.getAllRules = async (req, res, next) => {
   try {
-    const rules = await IntentRule.find({ merchant: req.user.id });
+    console.log("Fetching all intent rules for merchant:", req.user.merchant);
+    const rules = await IntentRule.find({ merchant: req.user.merchant });
     res.status(200).json({
       success: true,
       data: rules,
@@ -22,9 +23,9 @@ exports.getAllRules = async (req, res, next) => {
 exports.getRuleByType = async (req, res, next) => {
   try {
     const rule = await IntentRule.findOne({
-      merchant: req.user.id,
+      merchant: req.user.merchant,
       type: req.params.type,
-    });
+    }).populate("merchant", "name domain");
 
     if (!rule) {
       throw new ApiError(404, "Intent rule not found");
@@ -54,7 +55,7 @@ exports.createRule = async (req, res, next) => {
 
     // Check if rule already exists
     const existingRule = await IntentRule.findOne({
-      merchant: req.user.id,
+      merchant: req.user.merchant,
       type,
     });
 
@@ -63,13 +64,16 @@ exports.createRule = async (req, res, next) => {
     }
 
     const rule = await IntentRule.create({
-      merchant: req.user.id,
+      merchant: req.user.merchant,
       type,
       threshold,
       behavioralSignals,
       historicalFactors,
       deviceContext,
     });
+
+    // Populate merchant details
+    await rule.populate("merchant", "name domain");
 
     res.status(201).json({
       success: true,
@@ -90,7 +94,7 @@ exports.updateRule = async (req, res, next) => {
 
     const rule = await IntentRule.findOneAndUpdate(
       {
-        merchant: req.user.id,
+        merchant: req.user.merchant,
         type: req.params.type,
       },
       {
@@ -124,7 +128,7 @@ exports.updateRule = async (req, res, next) => {
 exports.deleteRule = async (req, res, next) => {
   try {
     const rule = await IntentRule.findOneAndDelete({
-      merchant: req.user.id,
+      merchant: req.user.merchant,
       type: req.params.type,
     });
 

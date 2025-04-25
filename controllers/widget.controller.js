@@ -8,8 +8,10 @@ exports.createWidget = async (req, res, next) => {
   try {
     const widget = await Widget.create({
       ...req.body,
-      merchant: req.user.id,
+      merchant: req.user.merchant,
     });
+
+    await widget.populate("merchant", "name domain");
 
     res.status(201).json({
       success: true,
@@ -25,7 +27,10 @@ exports.createWidget = async (req, res, next) => {
 // @access  Private
 exports.getAllWidgets = async (req, res, next) => {
   try {
-    const widgets = await Widget.find({ merchant: req.user.id });
+    const widgets = await Widget.find({ merchant: req.user.merchant }).populate(
+      "merchant",
+      "name domain"
+    );
 
     res.status(200).json({
       success: true,
@@ -43,8 +48,8 @@ exports.getWidgetById = async (req, res, next) => {
   try {
     const widget = await Widget.findOne({
       _id: req.params.id,
-      merchant: req.user.id,
-    });
+      merchant: req.user.merchant,
+    }).populate("merchant", "name domain");
 
     if (!widget) {
       throw new ApiError(404, "Widget not found");
@@ -65,10 +70,10 @@ exports.getWidgetById = async (req, res, next) => {
 exports.updateWidget = async (req, res, next) => {
   try {
     const widget = await Widget.findOneAndUpdate(
-      { _id: req.params.id, merchant: req.user.id },
+      { _id: req.params.id, merchant: req.user.merchant },
       req.body,
       { new: true, runValidators: true }
-    );
+    ).populate("merchant", "name domain");
 
     if (!widget) {
       throw new ApiError(404, "Widget not found");
@@ -90,8 +95,8 @@ exports.deleteWidget = async (req, res, next) => {
   try {
     const widget = await Widget.findOneAndDelete({
       _id: req.params.id,
-      merchant: req.user.id,
-    });
+      merchant: req.user.merchant,
+    }).populate("merchant", "name domain");
 
     if (!widget) {
       throw new ApiError(404, "Widget not found");
@@ -112,10 +117,10 @@ exports.deleteWidget = async (req, res, next) => {
 exports.activateWidget = async (req, res, next) => {
   try {
     const widget = await Widget.findOneAndUpdate(
-      { _id: req.params.id, merchant: req.user.id },
+      { _id: req.params.id, merchant: req.user.merchant },
       { isActive: true },
       { new: true }
-    );
+    ).populate("merchant", "name domain");
 
     if (!widget) {
       throw new ApiError(404, "Widget not found");
@@ -136,10 +141,10 @@ exports.activateWidget = async (req, res, next) => {
 exports.deactivateWidget = async (req, res, next) => {
   try {
     const widget = await Widget.findOneAndUpdate(
-      { _id: req.params.id, merchant: req.user.id },
+      { _id: req.params.id, merchant: req.user.merchant },
       { isActive: false },
       { new: true }
-    );
+    ).populate("merchant", "name domain");
 
     if (!widget) {
       throw new ApiError(404, "Widget not found");
@@ -160,10 +165,10 @@ exports.deactivateWidget = async (req, res, next) => {
 exports.updateDisplayRules = async (req, res, next) => {
   try {
     const widget = await Widget.findOneAndUpdate(
-      { _id: req.params.id, merchant: req.user.id },
+      { _id: req.params.id, merchant: req.user.merchant },
       { displayRules: req.body },
       { new: true, runValidators: true }
-    );
+    ).populate("merchant", "name domain");
 
     if (!widget) {
       throw new ApiError(404, "Widget not found");
@@ -185,8 +190,8 @@ exports.getWidgetPerformance = async (req, res, next) => {
   try {
     const widget = await Widget.findOne({
       _id: req.params.id,
-      merchant: req.user.id,
-    });
+      merchant: req.user.merchant,
+    }).populate("merchant", "name domain");
 
     if (!widget) {
       throw new ApiError(404, "Widget not found");
@@ -208,8 +213,8 @@ exports.getWidgetInteractions = async (req, res, next) => {
   try {
     const widget = await Widget.findOne({
       _id: req.params.id,
-      merchant: req.user.id,
-    });
+      merchant: req.user.merchant,
+    }).populate("merchant", "name domain");
 
     if (!widget) {
       throw new ApiError(404, "Widget not found");
@@ -241,8 +246,8 @@ exports.getWidgetConversionRate = async (req, res, next) => {
   try {
     const widget = await Widget.findOne({
       _id: req.params.id,
-      merchant: req.user.id,
-    });
+      merchant: req.user.merchant,
+    }).populate("merchant", "name domain");
 
     if (!widget) {
       throw new ApiError(404, "Widget not found");
@@ -274,10 +279,14 @@ exports.createMultipleWidgets = async (req, res, next) => {
   try {
     const widgets = req.body.map((widget) => ({
       ...widget,
-      merchant: req.user.id,
+      merchant: req.user.merchant,
     }));
 
     const createdWidgets = await Widget.insertMany(widgets);
+    await Widget.populate(createdWidgets, {
+      path: "merchant",
+      select: "name domain",
+    });
 
     res.status(201).json({
       success: true,
@@ -295,10 +304,10 @@ exports.updateMultipleWidgets = async (req, res, next) => {
   try {
     const updates = req.body.map(async ({ id, ...update }) => {
       return Widget.findOneAndUpdate(
-        { _id: id, merchant: req.user.id },
+        { _id: id, merchant: req.user.merchant },
         update,
         { new: true, runValidators: true }
-      );
+      ).populate("merchant", "name domain");
     });
 
     const updatedWidgets = await Promise.all(updates);
@@ -321,7 +330,7 @@ exports.deleteMultipleWidgets = async (req, res, next) => {
 
     const result = await Widget.deleteMany({
       _id: { $in: ids },
-      merchant: req.user.id,
+      merchant: req.user.merchant,
     });
 
     res.status(200).json({
@@ -342,8 +351,8 @@ exports.testWidget = async (req, res, next) => {
   try {
     const widget = await Widget.findOne({
       _id: req.params.id,
-      merchant: req.user.id,
-    });
+      merchant: req.user.merchant,
+    }).populate("merchant", "name domain");
 
     if (!widget) {
       throw new ApiError(404, "Widget not found");
@@ -389,8 +398,8 @@ exports.previewWidget = async (req, res, next) => {
   try {
     const widget = await Widget.findOne({
       _id: req.params.id,
-      merchant: req.user.id,
-    });
+      merchant: req.user.merchant,
+    }).populate("merchant", "name domain");
 
     if (!widget) {
       throw new ApiError(404, "Widget not found");

@@ -6,7 +6,14 @@ const { ApiError, ValidationError } = require("../utils/errors");
 // @access  Public
 exports.register = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, merchant } = req.body;
+
+    // Validate required fields
+    if (!email || !password || !merchant) {
+      throw new ValidationError(
+        "Please provide email, password and merchant ID"
+      );
+    }
 
     // Check if user exists
     const existingUser = await User.findOne({ email });
@@ -18,6 +25,7 @@ exports.register = async (req, res, next) => {
     const user = await User.create({
       email,
       password,
+      merchant,
     });
 
     // Generate token
@@ -45,7 +53,10 @@ exports.login = async (req, res, next) => {
     }
 
     // Check for user
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ email })
+      .select("+password")
+      .populate("merchant", "name domain");
+
     if (!user) {
       throw new ApiError(401, "Invalid credentials");
     }
@@ -73,7 +84,10 @@ exports.login = async (req, res, next) => {
 // @access  Private
 exports.getCurrentUser = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user.id).populate(
+      "merchant",
+      "name domain"
+    );
     res.status(200).json({
       success: true,
       data: user,
@@ -95,7 +109,7 @@ exports.updateCurrentUser = async (req, res, next) => {
     const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
       new: true,
       runValidators: true,
-    });
+    }).populate("merchant", "name domain");
 
     res.status(200).json({
       success: true,
@@ -125,7 +139,10 @@ exports.logout = async (req, res, next) => {
 // @access  Public
 exports.refreshToken = async (req, res, next) => {
   try {
-    const user = await User.findById(req.body.userId);
+    const user = await User.findById(req.body.userId).populate(
+      "merchant",
+      "name domain"
+    );
     if (!user) {
       throw new ApiError(401, "Invalid refresh token");
     }

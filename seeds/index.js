@@ -1,6 +1,7 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const Merchant = require("../models/merchant.model");
+const User = require("../models/user.model");
 const IntentRule = require("../models/intentRule.model");
 const Widget = require("../models/widget.model");
 const Detection = require("../models/detection.model");
@@ -8,6 +9,7 @@ const Configuration = require("../models/configuration.model");
 const CheckoutFactor = require("../models/checkoutFactor.model");
 
 const merchants = require("./merchants");
+const users = require("./users");
 const intentRules = require("./intentRules");
 const widgets = require("./widgets");
 const detections = require("./detections");
@@ -23,6 +25,7 @@ async function seedDatabase() {
     // Clear existing data
     await Promise.all([
       Merchant.deleteMany({}),
+      User.deleteMany({}),
       IntentRule.deleteMany({}),
       Widget.deleteMany({}),
       Detection.deleteMany({}),
@@ -34,6 +37,14 @@ async function seedDatabase() {
     // Create demo merchant
     const demoMerchant = await Merchant.create(merchants[0]);
     console.log("Created demo merchant");
+
+    // Create users with merchant reference
+    const usersWithMerchant = users.map((user) => ({
+      ...user,
+      merchant: demoMerchant._id,
+    }));
+    await User.create(usersWithMerchant);
+    console.log("Created users");
 
     // Create intent rules for demo merchant
     const intentRulesWithMerchant = intentRules.map((rule) => ({

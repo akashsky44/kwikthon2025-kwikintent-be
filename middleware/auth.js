@@ -12,12 +12,21 @@ const authenticate = async (req, res, next) => {
     const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const user = await User.findById(decoded.id);
+    const user = await User.findById(decoded.id).populate(
+      "merchant",
+      "name domain"
+    );
     if (!user) {
       throw new ApiError(401, "User not found");
     }
 
-    req.user = user;
+    req.user = {
+      id: user._id,
+      email: user.email,
+      role: user.role,
+      merchant: user.merchant._id,
+    };
+
     next();
   } catch (error) {
     if (error.name === "JsonWebTokenError") {
@@ -39,4 +48,22 @@ const authorize = (...roles) => {
   };
 };
 
-module.exports = { authenticate, authorize };
+// Middleware to check if user has access to merchant data
+const checkMerchantAccess = (req, res, next) => {
+  try {
+    const requestedMerchantId = req.params.merchantId || req.body.merchant;
+
+    if (
+      requestedMerchantId &&
+      requestedMerchantId !== req.user.merchant.toString()
+    ) {
+      throw new ApiError(403, "Not authorized to access this merchant's data");
+    }
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { authenticate, authorize, checkMerchantAccess };
