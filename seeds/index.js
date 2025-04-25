@@ -22,39 +22,38 @@ async function seedDatabase() {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log("Connected to MongoDB");
 
-    // Clear existing data
-    await Promise.all([
-      Merchant.deleteMany({}),
-      User.deleteMany({}),
-      IntentRule.deleteMany({}),
-      Widget.deleteMany({}),
-      Detection.deleteMany({}),
-      Configuration.deleteMany({}),
-      CheckoutFactor.deleteMany({}),
-    ]);
+    // Drop database to ensure clean state
+    await mongoose.connection.dropDatabase();
     console.log("Cleared existing data");
 
-    // Create demo merchant
+    // Step 1: Create demo merchant (without owner)
     const demoMerchant = await Merchant.create(merchants[0]);
     console.log("Created demo merchant");
 
-    // Create users with merchant reference
-    const usersWithMerchant = users.map((user) => ({
+    // Step 2: Create users with merchant reference
+    const adminUser = await User.create({
+      email: "admin@example.com",
+      password: "admin123",
+      role: "admin",
+      merchant: demoMerchant._id,
+    });
+
+    const additionalUsers = users.map((user) => ({
       ...user,
       merchant: demoMerchant._id,
     }));
-    await User.create(usersWithMerchant);
+    await User.create(additionalUsers);
     console.log("Created users");
 
-    // Create intent rules for demo merchant
-    const intentRulesWithMerchant = intentRules.map((rule) => ({
+    // Step 3: Create intent rules
+    const rulesWithMerchant = intentRules.map((rule) => ({
       ...rule,
       merchant: demoMerchant._id,
     }));
-    await IntentRule.create(intentRulesWithMerchant);
+    await IntentRule.create(rulesWithMerchant);
     console.log("Created intent rules");
 
-    // Create widgets for demo merchant
+    // Step 4: Create widgets
     const widgetsWithMerchant = widgets.map((widget) => ({
       ...widget,
       merchant: demoMerchant._id,
@@ -62,15 +61,15 @@ async function seedDatabase() {
     await Widget.create(widgetsWithMerchant);
     console.log("Created widgets");
 
-    // Create sample detections
+    // Step 5: Create detections
     const detectionsWithMerchant = detections.map((detection) => ({
       ...detection,
       merchant: demoMerchant._id,
     }));
     await Detection.create(detectionsWithMerchant);
-    console.log("Created sample detections");
+    console.log("Created detections");
 
-    // Create configuration for demo merchant
+    // Step 6: Create configuration
     const configWithMerchant = {
       ...configurations[0],
       merchant: demoMerchant._id,
@@ -78,18 +77,25 @@ async function seedDatabase() {
     await Configuration.create(configWithMerchant);
     console.log("Created configuration");
 
-    // Create checkout factors for demo merchant
-    const checkoutFactorsWithMerchant = checkoutFactors.map((factor) => ({
+    // Step 7: Create checkout factors
+    const factorsWithMerchant = checkoutFactors.map((factor) => ({
       ...factor,
       merchant: demoMerchant._id,
     }));
-    await CheckoutFactor.create(checkoutFactorsWithMerchant);
+    await CheckoutFactor.create(factorsWithMerchant);
     console.log("Created checkout factors");
 
-    console.log("Database seeded successfully");
+    console.log("\nDatabase seeded successfully!");
+    console.log("\nTest Credentials:");
+    console.log("Admin Email:", adminUser.email);
+    console.log("Admin Password: admin123");
+    console.log("\nMerchant Details:");
+    console.log("Domain:", demoMerchant.domain);
+    console.log("API Key:", demoMerchant.apiKey);
+
     process.exit(0);
   } catch (error) {
-    console.error("Error seeding database:", error);
+    console.error("\nError seeding database:", error);
     process.exit(1);
   }
 }

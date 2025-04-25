@@ -7,7 +7,6 @@ const merchantSchema = new mongoose.Schema(
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: [true, "Owner is required"],
     },
     name: {
       type: String,
@@ -128,7 +127,7 @@ const merchantSchema = new mongoose.Schema(
     },
     isActive: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     role: {
       type: String,
@@ -201,7 +200,6 @@ merchantSchema.pre("remove", async function (next) {
 });
 
 // Indexes
-merchantSchema.index({ domain: 1 });
 merchantSchema.index({ platform: 1 });
 merchantSchema.index({ isActive: 1 });
 merchantSchema.index({ createdAt: -1 });

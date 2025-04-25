@@ -6,6 +6,7 @@ const merchants = [
     apiKey: "demo_api_key",
     apiSecret: "demo_api_secret",
     password: "demo123",
+    isActive: false,
     settings: {
       widgetPlacement: "below-price",
       intentThresholds: {

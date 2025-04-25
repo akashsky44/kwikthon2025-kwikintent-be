@@ -23,7 +23,9 @@ const userSchema = new mongoose.Schema({
   merchant: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Merchant",
-    required: [true, "Merchant ID is required"],
+    required: function () {
+      return this.role !== "admin"; // Merchant ID only required for non-admin users
+    },
   },
   role: {
     type: String,

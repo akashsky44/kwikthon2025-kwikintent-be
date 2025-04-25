@@ -15,7 +15,6 @@ const detectionSchema = new mongoose.Schema(
     sessionId: {
       type: String,
       required: true,
-      unique: true,
     },
     product: {
       id: {
@@ -154,7 +153,7 @@ detectionSchema.index({ merchant: 1, widgetShown: 1 });
 detectionSchema.index({ merchant: 1, converted: 1 });
 detectionSchema.index({ merchant: 1, "product.id": 1 });
 detectionSchema.index({ visitorId: 1, createdAt: -1 });
-detectionSchema.index({ sessionId: 1 }, { unique: true });
+detectionSchema.index({ sessionId: 1 }, { unique: true, sparse: true });
 
 // Methods
 detectionSchema.methods.updateConversion = async function (type, value) {
