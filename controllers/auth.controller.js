@@ -28,12 +28,23 @@ exports.register = async (req, res, next) => {
       merchant,
     });
 
+    // Populate merchant details
+    await user.populate("merchant", "name domain");
+
     // Generate token
     const token = user.getSignedToken();
 
     res.status(201).json({
       success: true,
       token,
+      user: {
+        email: user.email,
+        merchant: {
+          id: user.merchant,
+          name: user.merchant.name,
+          domain: user.merchant.domain,
+        },
+      },
     });
   } catch (error) {
     next(error);
@@ -73,6 +84,14 @@ exports.login = async (req, res, next) => {
     res.status(200).json({
       success: true,
       token,
+      user: {
+        email: user.email,
+        merchant: {
+          id: user.merchant._id,
+          name: user.merchant.name,
+          domain: user.merchant.domain,
+        },
+      },
     });
   } catch (error) {
     next(error);
@@ -152,6 +171,14 @@ exports.refreshToken = async (req, res, next) => {
     res.status(200).json({
       success: true,
       token,
+      user: {
+        email: user.email,
+        merchant: {
+          id: user.merchant._id,
+          name: user.merchant.name,
+          domain: user.merchant.domain,
+        },
+      },
     });
   } catch (error) {
     next(error);
