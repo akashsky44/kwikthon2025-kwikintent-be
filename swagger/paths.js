@@ -6,6 +6,7 @@ const dashboardPaths = require("./dashboard-paths");
 const publicPaths = require("./public-paths");
 const intentRulesPaths = require("./intent-rules-paths");
 const widgetPaths = require("./widget-paths");
+const widgetPreviewPaths = require("./widget-preview-paths");
 
 module.exports = {
   "/health": {
@@ -191,6 +192,7 @@ module.exports = {
   ...publicPaths,
   ...intentRulesPaths,
   ...widgetPaths,
+  ...widgetPreviewPaths,
   "/analytics/overview": {
     get: {
       tags: ["Analytics"],

@@ -5,6 +5,7 @@ const { authenticate } = require("../middleware/auth");
 // Import route handlers
 const authRoutes = require("./auth.routes");
 const widgetRoutes = require("./widget.routes");
+const widgetPreviewRoutes = require("./widget-preview.routes");
 const checkoutFactorRoutes = require("./checkoutFactor.routes");
 const configurationRoutes = require("./configuration.routes");
 const merchantRoutes = require("./merchant.routes");
@@ -20,6 +21,7 @@ router.use("/public", publicRoutes);
 // Protected routes
 router.use("/auth", authRoutes);
 router.use("/widgets", authenticate, widgetRoutes);
+router.use("/widgets", authenticate, widgetPreviewRoutes);
 router.use("/checkout-factors", authenticate, checkoutFactorRoutes);
 router.use("/configuration", authenticate, configurationRoutes);
 router.use("/merchants", authenticate, merchantRoutes);
