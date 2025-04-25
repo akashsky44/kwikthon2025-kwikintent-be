@@ -1,4 +1,44 @@
+const checkoutFactorPaths = require("./checkout-factor-paths");
+const configurationPaths = require("./configuration-paths");
+const merchantPaths = require("./merchant-paths");
+const pdpPaths = require("./pdp-paths");
+const dashboardPaths = require("./dashboard-paths");
+const publicPaths = require("./public-paths");
+
 module.exports = {
+  "/health": {
+    get: {
+      tags: ["System"],
+      summary: "Health check endpoint",
+      responses: {
+        200: {
+          description: "API health status",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  message: {
+                    type: "string",
+                    example: "API is healthy",
+                  },
+                  timestamp: {
+                    type: "string",
+                    format: "date-time",
+                    example: "2024-04-25T14:55:33.123Z",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
   "/auth/register": {
     post: {
       tags: ["Authentication"],
@@ -71,20 +111,26 @@ module.exports = {
       },
     },
   },
-  "/intent-rules": {
+  "/auth/me": {
     get: {
-      tags: ["Intent Rules"],
-      summary: "Get all intent rules for merchant",
+      tags: ["Authentication"],
+      summary: "Get current user profile",
       security: [{ bearerAuth: [] }],
       responses: {
         200: {
-          description: "List of intent rules",
+          description: "Current user profile",
           content: {
             "application/json": {
               schema: {
-                type: "array",
-                items: {
-                  $ref: "#/components/schemas/IntentRule",
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  data: {
+                    $ref: "#/components/schemas/User",
+                  },
                 },
               },
             },
@@ -92,48 +138,41 @@ module.exports = {
         },
       },
     },
-    post: {
-      tags: ["Intent Rules"],
-      summary: "Create intent rule",
+    put: {
+      tags: ["Authentication"],
+      summary: "Update current user profile",
       security: [{ bearerAuth: [] }],
       requestBody: {
         required: true,
         content: {
           "application/json": {
             schema: {
-              $ref: "#/components/schemas/IntentRule",
-            },
-          },
-        },
-      },
-      responses: {
-        201: {
-          description: "Intent rule created",
-          content: {
-            "application/json": {
-              schema: {
-                $ref: "#/components/schemas/IntentRule",
+              type: "object",
+              properties: {
+                email: {
+                  type: "string",
+                  format: "email",
+                },
               },
             },
           },
         },
       },
-    },
-  },
-  "/widgets": {
-    get: {
-      tags: ["Widgets"],
-      summary: "Get all widgets for merchant",
-      security: [{ bearerAuth: [] }],
       responses: {
         200: {
-          description: "List of widgets",
+          description: "Profile updated successfully",
           content: {
             "application/json": {
               schema: {
-                type: "array",
-                items: {
-                  $ref: "#/components/schemas/Widget",
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  data: {
+                    $ref: "#/components/schemas/User",
+                  },
                 },
               },
             },
@@ -141,34 +180,13 @@ module.exports = {
         },
       },
     },
-    post: {
-      tags: ["Widgets"],
-      summary: "Create widget",
-      security: [{ bearerAuth: [] }],
-      requestBody: {
-        required: true,
-        content: {
-          "application/json": {
-            schema: {
-              $ref: "#/components/schemas/Widget",
-            },
-          },
-        },
-      },
-      responses: {
-        201: {
-          description: "Widget created",
-          content: {
-            "application/json": {
-              schema: {
-                $ref: "#/components/schemas/Widget",
-              },
-            },
-          },
-        },
-      },
-    },
   },
+  ...checkoutFactorPaths,
+  ...configurationPaths,
+  ...merchantPaths,
+  ...pdpPaths,
+  ...dashboardPaths,
+  ...publicPaths,
   "/analytics/overview": {
     get: {
       tags: ["Analytics"],
@@ -188,126 +206,41 @@ module.exports = {
       },
     },
   },
-  "/public/pdp/poll/{merchantId}": {
-    post: {
-      tags: ["Public"],
-      summary: "Poll for user intent and get widget",
-      parameters: [
-        {
-          in: "path",
-          name: "merchantId",
-          required: true,
-          schema: {
-            type: "string",
-            format: "objectId",
-          },
-          description: "ID of the merchant",
-        },
-      ],
-      requestBody: {
-        required: true,
-        content: {
-          "application/json": {
-            schema: {
-              $ref: "#/components/schemas/PollRequest",
-            },
-          },
-        },
-      },
+  "/analytics/intent-distribution": {
+    get: {
+      tags: ["Analytics"],
+      summary: "Get intent distribution analytics",
+      security: [{ bearerAuth: [] }],
       responses: {
         200: {
-          description: "Intent analysis successful",
+          description: "Intent distribution data",
           content: {
             "application/json": {
               schema: {
-                $ref: "#/components/schemas/PollResponse",
-              },
-            },
-          },
-        },
-        404: {
-          description: "Merchant not found",
-          content: {
-            "application/json": {
-              schema: {
-                $ref: "#/components/schemas/Error",
-              },
-            },
-          },
-        },
-      },
-    },
-  },
-  "/merchants/{merchantId}/settings": {
-    put: {
-      tags: ["Merchants"],
-      summary: "Update merchant settings",
-      security: [{ bearerAuth: [] }],
-      parameters: [
-        {
-          in: "path",
-          name: "merchantId",
-          required: true,
-          schema: {
-            type: "string",
-            format: "objectId",
-          },
-          description: "ID of the merchant",
-        },
-      ],
-      requestBody: {
-        required: true,
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                settings: {
-                  type: "object",
-                  properties: {
-                    widgetPlacement: {
-                      type: "string",
-                      enum: ["below-price", "above-button"],
-                    },
-                    intentThresholds: {
-                      type: "object",
-                      properties: {
-                        highIntent: {
-                          type: "number",
-                          minimum: 0,
-                          maximum: 100,
-                        },
-                        priceSensitive: {
-                          type: "number",
-                          minimum: 0,
-                          maximum: 100,
-                        },
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      highIntent: {
+                        type: "number",
+                        example: 30,
+                      },
+                      priceSensitive: {
+                        type: "number",
+                        example: 45,
+                      },
+                      justBrowsing: {
+                        type: "number",
+                        example: 25,
                       },
                     },
                   },
                 },
-              },
-            },
-          },
-        },
-      },
-      responses: {
-        200: {
-          description: "Settings updated",
-          content: {
-            "application/json": {
-              schema: {
-                $ref: "#/components/schemas/Merchant",
-              },
-            },
-          },
-        },
-        403: {
-          description: "Not authorized to access this merchant",
-          content: {
-            "application/json": {
-              schema: {
-                $ref: "#/components/schemas/Error",
               },
             },
           },
