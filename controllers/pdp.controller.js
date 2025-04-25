@@ -59,7 +59,7 @@ exports.pollUserBehavior = async (req, res, next) => {
         product,
         behavioralSignals,
         deviceInfo,
-        determinedIntent,
+        intentType: determinedIntent,
         intentScore: highestScore,
         widgetShown: widget ? widget._id : null,
         timestamp: Date.now(),
@@ -278,20 +278,18 @@ exports.getWidgetScript = async (req, res, next) => {
 // @access  Private
 exports.getAnalyticsOverview = async (req, res, next) => {
   try {
-    const detections = await Detection.find({ merchant: req.user.id });
+    const detections = await Detection.find({ merchant: req.user.merchant });
 
     const overview = {
       totalDetections: detections.length,
       intentDistribution: {
-        highIntent: detections.filter(
-          (d) => d.determinedIntent === "high-intent"
-        ).length,
+        highIntent: detections.filter((d) => d.intentType === "high-intent")
+          .length,
         priceSensitive: detections.filter(
-          (d) => d.determinedIntent === "price-sensitive"
+          (d) => d.intentType === "price-sensitive"
         ).length,
-        justBrowsing: detections.filter(
-          (d) => d.determinedIntent === "just-browsing"
-        ).length,
+        justBrowsing: detections.filter((d) => d.intentType === "just-browsing")
+          .length,
       },
       averageIntentScore:
         detections.reduce((acc, curr) => acc + curr.intentScore, 0) /
@@ -317,10 +315,10 @@ exports.getAnalyticsOverview = async (req, res, next) => {
 exports.getIntentDistribution = async (req, res, next) => {
   try {
     const distribution = await Detection.aggregate([
-      { $match: { merchant: req.user.id } },
+      { $match: { merchant: req.user.merchant } },
       {
         $group: {
-          _id: "$determinedIntent",
+          _id: "$intentType",
           count: { $sum: 1 },
           averageScore: { $avg: "$intentScore" },
         },
@@ -341,7 +339,7 @@ exports.getIntentDistribution = async (req, res, next) => {
 // @access  Private
 exports.getConversionRates = async (req, res, next) => {
   try {
-    const detections = await Detection.find({ merchant: req.user.id });
+    const detections = await Detection.find({ merchant: req.user.merchant });
 
     const rates = {
       overall: {
@@ -353,46 +351,43 @@ exports.getConversionRates = async (req, res, next) => {
       },
       byIntent: {
         highIntent: {
-          total: detections.filter((d) => d.determinedIntent === "high-intent")
+          total: detections.filter((d) => d.intentType === "high-intent")
             .length,
           converted: detections.filter(
-            (d) => d.determinedIntent === "high-intent" && d.converted
+            (d) => d.intentType === "high-intent" && d.converted
           ).length,
           rate:
             (detections.filter(
-              (d) => d.determinedIntent === "high-intent" && d.converted
+              (d) => d.intentType === "high-intent" && d.converted
             ).length /
-              detections.filter((d) => d.determinedIntent === "high-intent")
-                .length) *
+              detections.filter((d) => d.intentType === "high-intent").length) *
               100 || 0,
         },
         priceSensitive: {
-          total: detections.filter(
-            (d) => d.determinedIntent === "price-sensitive"
-          ).length,
+          total: detections.filter((d) => d.intentType === "price-sensitive")
+            .length,
           converted: detections.filter(
-            (d) => d.determinedIntent === "price-sensitive" && d.converted
+            (d) => d.intentType === "price-sensitive" && d.converted
           ).length,
           rate:
             (detections.filter(
-              (d) => d.determinedIntent === "price-sensitive" && d.converted
+              (d) => d.intentType === "price-sensitive" && d.converted
             ).length /
-              detections.filter((d) => d.determinedIntent === "price-sensitive")
+              detections.filter((d) => d.intentType === "price-sensitive")
                 .length) *
               100 || 0,
         },
         justBrowsing: {
-          total: detections.filter(
-            (d) => d.determinedIntent === "just-browsing"
-          ).length,
+          total: detections.filter((d) => d.intentType === "just-browsing")
+            .length,
           converted: detections.filter(
-            (d) => d.determinedIntent === "just-browsing" && d.converted
+            (d) => d.intentType === "just-browsing" && d.converted
           ).length,
           rate:
             (detections.filter(
-              (d) => d.determinedIntent === "just-browsing" && d.converted
+              (d) => d.intentType === "just-browsing" && d.converted
             ).length /
-              detections.filter((d) => d.determinedIntent === "just-browsing")
+              detections.filter((d) => d.intentType === "just-browsing")
                 .length) *
               100 || 0,
         },
@@ -413,12 +408,12 @@ exports.getConversionRates = async (req, res, next) => {
 // @access  Private
 exports.getWidgetPerformance = async (req, res, next) => {
   try {
-    const widgets = await Widget.find({ merchant: req.user.id });
+    const widgets = await Widget.find({ merchant: req.user.merchant });
 
     const performance = await Promise.all(
       widgets.map(async (widget) => {
         const detections = await Detection.find({
-          merchant: req.user.id,
+          merchant: req.user.merchant,
           widgetShown: widget._id,
         });
 
@@ -450,7 +445,7 @@ exports.getWidgetPerformance = async (req, res, next) => {
 // @access  Private
 exports.exportAnalytics = async (req, res, next) => {
   try {
-    const detections = await Detection.find({ merchant: req.user.id })
+    const detections = await Detection.find({ merchant: req.user.merchant })
       .populate("widgetShown", "name widgetType")
       .select("-__v");
 
@@ -458,7 +453,7 @@ exports.exportAnalytics = async (req, res, next) => {
       detections: detections.map((d) => ({
         sessionId: d.sessionId,
         visitorId: d.visitorId,
-        determinedIntent: d.determinedIntent,
+        intentType: d.intentType,
         intentScore: d.intentScore,
         widget: d.widgetShown
           ? {
@@ -472,14 +467,13 @@ exports.exportAnalytics = async (req, res, next) => {
       summary: {
         totalDetections: detections.length,
         intentDistribution: {
-          highIntent: detections.filter(
-            (d) => d.determinedIntent === "high-intent"
-          ).length,
+          highIntent: detections.filter((d) => d.intentType === "high-intent")
+            .length,
           priceSensitive: detections.filter(
-            (d) => d.determinedIntent === "price-sensitive"
+            (d) => d.intentType === "price-sensitive"
           ).length,
           justBrowsing: detections.filter(
-            (d) => d.determinedIntent === "just-browsing"
+            (d) => d.intentType === "just-browsing"
           ).length,
         },
         conversionRate:

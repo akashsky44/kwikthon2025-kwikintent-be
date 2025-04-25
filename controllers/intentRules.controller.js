@@ -24,7 +24,7 @@ exports.getRuleByType = async (req, res, next) => {
   try {
     const rule = await IntentRule.findOne({
       merchant: req.user.merchant,
-      type: req.params.type,
+      intentType: req.params.type,
     }).populate("merchant", "name domain");
 
     if (!rule) {
@@ -46,7 +46,7 @@ exports.getRuleByType = async (req, res, next) => {
 exports.createRule = async (req, res, next) => {
   try {
     const {
-      type,
+      intentType,
       threshold,
       behavioralSignals,
       historicalFactors,
@@ -56,7 +56,7 @@ exports.createRule = async (req, res, next) => {
     // Check if rule already exists
     const existingRule = await IntentRule.findOne({
       merchant: req.user.merchant,
-      type,
+      intentType,
     });
 
     if (existingRule) {
@@ -65,7 +65,7 @@ exports.createRule = async (req, res, next) => {
 
     const rule = await IntentRule.create({
       merchant: req.user.merchant,
-      type,
+      intentType,
       threshold,
       behavioralSignals,
       historicalFactors,
@@ -95,7 +95,7 @@ exports.updateRule = async (req, res, next) => {
     const rule = await IntentRule.findOneAndUpdate(
       {
         merchant: req.user.merchant,
-        type: req.params.type,
+        intentType: req.params.type,
       },
       {
         threshold,
@@ -129,7 +129,7 @@ exports.deleteRule = async (req, res, next) => {
   try {
     const rule = await IntentRule.findOneAndDelete({
       merchant: req.user.merchant,
-      type: req.params.type,
+      intentType: req.params.type,
     });
 
     if (!rule) {

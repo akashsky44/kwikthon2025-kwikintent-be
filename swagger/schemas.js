@@ -479,4 +479,200 @@ module.exports = {
       },
     },
   },
+  CheckoutFactor: {
+    type: "object",
+    required: ["merchant", "factorType", "name", "description", "impact"],
+    properties: {
+      merchant: {
+        type: "string",
+        format: "objectId",
+        description: "Merchant ID",
+        example: "507f1f77bcf86cd799439011",
+      },
+      factorType: {
+        type: "string",
+        enum: [
+          "payment-friction",
+          "shipping-concerns",
+          "trust-concerns",
+          "price-sensitivity",
+          "urgency",
+          "social-proof",
+        ],
+        example: "urgency",
+      },
+      name: {
+        type: "string",
+        example: "Limited Time Offer",
+      },
+      description: {
+        type: "string",
+        example: "Creates urgency by showing limited time availability",
+      },
+      impact: {
+        type: "number",
+        minimum: 0,
+        maximum: 100,
+        example: 75,
+      },
+      enabled: {
+        type: "boolean",
+        default: true,
+        example: true,
+      },
+      intentStrategies: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            intentType: {
+              type: "string",
+              enum: [
+                "high-intent",
+                "price-sensitive",
+                "cart-abandoner",
+                "first-time-visitor",
+              ],
+              example: "high-intent",
+            },
+            enabled: {
+              type: "boolean",
+              example: true,
+            },
+            strategy: {
+              type: "string",
+              example: "show-discount",
+            },
+          },
+        },
+      },
+      strategies: {
+        type: "object",
+        additionalProperties: {
+          type: "object",
+          properties: {
+            name: {
+              type: "string",
+              example: "Discount Strategy",
+            },
+            description: {
+              type: "string",
+              example: "Offers percentage-based discount",
+            },
+            enabled: {
+              type: "boolean",
+              example: true,
+            },
+            value: {
+              type: "string",
+              example: "10% OFF",
+            },
+          },
+        },
+      },
+      performance: {
+        type: "object",
+        properties: {
+          impressions: {
+            type: "number",
+            example: 1000,
+          },
+          interactions: {
+            type: "number",
+            example: 250,
+          },
+          conversions: {
+            type: "number",
+            example: 50,
+          },
+          lastUpdated: {
+            type: "string",
+            format: "date-time",
+            example: "2024-04-25T14:55:33.123Z",
+          },
+        },
+      },
+      displayRules: {
+        type: "object",
+        properties: {
+          minOrderValue: {
+            type: "number",
+            example: 50,
+          },
+          maxOrderValue: {
+            type: "number",
+            example: 500,
+          },
+          customerTypes: {
+            type: "array",
+            items: {
+              type: "string",
+              enum: ["new", "returning", "vip"],
+            },
+            example: ["new", "returning"],
+          },
+          geoLocations: {
+            type: "array",
+            items: {
+              type: "string",
+            },
+            example: ["US", "CA", "UK"],
+          },
+          deviceTypes: {
+            type: "array",
+            items: {
+              type: "string",
+              enum: ["mobile", "tablet", "desktop"],
+            },
+            example: ["mobile", "desktop"],
+          },
+          timeRestrictions: {
+            type: "object",
+            properties: {
+              startTime: {
+                type: "string",
+                example: "09:00",
+              },
+              endTime: {
+                type: "string",
+                example: "17:00",
+              },
+              daysOfWeek: {
+                type: "array",
+                items: {
+                  type: "string",
+                  enum: [
+                    "monday",
+                    "tuesday",
+                    "wednesday",
+                    "thursday",
+                    "friday",
+                    "saturday",
+                    "sunday",
+                  ],
+                },
+                example: [
+                  "monday",
+                  "tuesday",
+                  "wednesday",
+                  "thursday",
+                  "friday",
+                ],
+              },
+            },
+          },
+        },
+      },
+      createdAt: {
+        type: "string",
+        format: "date-time",
+        example: "2024-04-25T14:55:33.123Z",
+      },
+      updatedAt: {
+        type: "string",
+        format: "date-time",
+        example: "2024-04-25T14:55:33.123Z",
+      },
+    },
+  },
 };

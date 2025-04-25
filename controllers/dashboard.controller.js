@@ -7,10 +7,12 @@ const Widget = require("../models/widget.model");
 exports.getMetrics = async (req, res, next) => {
   try {
     const totalDetections = await Detection.countDocuments({
-      merchant: req.user.id,
+      merchant: req.user.merchant,
     });
-    const totalWidgets = await Widget.countDocuments({ merchant: req.user.id });
-    const conversionRate = await calculateConversionRate(req.user.id);
+    const totalWidgets = await Widget.countDocuments({
+      merchant: req.user.merchant,
+    });
+    const conversionRate = await calculateConversionRate(req.user.merchant);
 
     res.status(200).json({
       success: true,
@@ -30,7 +32,7 @@ exports.getMetrics = async (req, res, next) => {
 // @access  Private
 exports.getRecentDetections = async (req, res, next) => {
   try {
-    const detections = await Detection.find({ merchant: req.user.id })
+    const detections = await Detection.find({ merchant: req.user.merchant })
       .sort({ createdAt: -1 })
       .limit(10)
       .populate("widgetShown", "name");
@@ -49,21 +51,21 @@ exports.getRecentDetections = async (req, res, next) => {
 // @access  Private
 exports.getWidgetStats = async (req, res, next) => {
   try {
-    const widgets = await Widget.find({ merchant: req.user.id });
+    const widgets = await Widget.find({ merchant: req.user.merchant });
     const stats = [];
 
     for (const widget of widgets) {
       const impressions = await Detection.countDocuments({
-        merchant: req.user.id,
+        merchant: req.user.merchant,
         widgetShown: widget._id,
       });
       const interactions = await Detection.countDocuments({
-        merchant: req.user.id,
+        merchant: req.user.merchant,
         widgetShown: widget._id,
         widgetInteracted: true,
       });
       const conversions = await Detection.countDocuments({
-        merchant: req.user.id,
+        merchant: req.user.merchant,
         widgetShown: widget._id,
         converted: true,
       });
@@ -94,7 +96,7 @@ exports.getIntentTrends = async (req, res, next) => {
   try {
     const trends = await Detection.aggregate([
       {
-        $match: { merchant: req.user.id },
+        $match: { merchant: req.user.merchant },
       },
       {
         $group: {
@@ -126,7 +128,7 @@ exports.getConversionStats = async (req, res, next) => {
   try {
     const stats = await Detection.aggregate([
       {
-        $match: { merchant: req.user.id },
+        $match: { merchant: req.user.merchant },
       },
       {
         $group: {

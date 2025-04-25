@@ -8,7 +8,7 @@ exports.createFactor = async (req, res, next) => {
   try {
     const factor = await CheckoutFactor.create({
       ...req.body,
-      merchant: req.user.id,
+      merchant: req.user.merchant,
     });
 
     res.status(201).json({
@@ -25,7 +25,7 @@ exports.createFactor = async (req, res, next) => {
 // @access  Private
 exports.getAllFactors = async (req, res, next) => {
   try {
-    const factors = await CheckoutFactor.find({ merchant: req.user.id });
+    const factors = await CheckoutFactor.find({ merchant: req.user.merchant });
 
     res.status(200).json({
       success: true,
@@ -43,7 +43,7 @@ exports.getFactorById = async (req, res, next) => {
   try {
     const factor = await CheckoutFactor.findOne({
       _id: req.params.id,
-      merchant: req.user.id,
+      merchant: req.user.merchant,
     });
 
     if (!factor) {
@@ -65,7 +65,7 @@ exports.getFactorById = async (req, res, next) => {
 exports.updateFactor = async (req, res, next) => {
   try {
     const factor = await CheckoutFactor.findOneAndUpdate(
-      { _id: req.params.id, merchant: req.user.id },
+      { _id: req.params.id, merchant: req.user.merchant },
       req.body,
       { new: true, runValidators: true }
     );
@@ -90,7 +90,7 @@ exports.deleteFactor = async (req, res, next) => {
   try {
     const factor = await CheckoutFactor.findOneAndDelete({
       _id: req.params.id,
-      merchant: req.user.id,
+      merchant: req.user.merchant,
     });
 
     if (!factor) {
@@ -112,7 +112,7 @@ exports.deleteFactor = async (req, res, next) => {
 exports.activateFactor = async (req, res, next) => {
   try {
     const factor = await CheckoutFactor.findOneAndUpdate(
-      { _id: req.params.id, merchant: req.user.id },
+      { _id: req.params.id, merchant: req.user.merchant },
       { enabled: true },
       { new: true }
     );
@@ -136,7 +136,7 @@ exports.activateFactor = async (req, res, next) => {
 exports.deactivateFactor = async (req, res, next) => {
   try {
     const factor = await CheckoutFactor.findOneAndUpdate(
-      { _id: req.params.id, merchant: req.user.id },
+      { _id: req.params.id, merchant: req.user.merchant },
       { enabled: false },
       { new: true }
     );
@@ -160,7 +160,7 @@ exports.deactivateFactor = async (req, res, next) => {
 exports.updateStrategies = async (req, res, next) => {
   try {
     const factor = await CheckoutFactor.findOneAndUpdate(
-      { _id: req.params.id, merchant: req.user.id },
+      { _id: req.params.id, merchant: req.user.merchant },
       { strategies: req.body },
       { new: true, runValidators: true }
     );
@@ -185,7 +185,7 @@ exports.getFactorPerformance = async (req, res, next) => {
   try {
     const factor = await CheckoutFactor.findOne({
       _id: req.params.id,
-      merchant: req.user.id,
+      merchant: req.user.merchant,
     });
 
     if (!factor) {
@@ -208,7 +208,7 @@ exports.getFactorInteractions = async (req, res, next) => {
   try {
     const factor = await CheckoutFactor.findOne({
       _id: req.params.id,
-      merchant: req.user.id,
+      merchant: req.user.merchant,
     });
 
     if (!factor) {
@@ -241,7 +241,7 @@ exports.getFactorConversionRate = async (req, res, next) => {
   try {
     const factor = await CheckoutFactor.findOne({
       _id: req.params.id,
-      merchant: req.user.id,
+      merchant: req.user.merchant,
     });
 
     if (!factor) {
@@ -273,7 +273,7 @@ exports.getFactorConversionRate = async (req, res, next) => {
 exports.getFactorsByType = async (req, res, next) => {
   try {
     const factors = await CheckoutFactor.find({
-      merchant: req.user.id,
+      merchant: req.user.merchant,
       factorType: req.params.type,
     });
 
@@ -294,7 +294,7 @@ exports.getTypePerformance = async (req, res, next) => {
     const stats = await CheckoutFactor.aggregate([
       {
         $match: {
-          merchant: req.user.id,
+          merchant: req.user.merchant,
           factorType: req.params.type,
         },
       },
@@ -349,7 +349,7 @@ exports.getTypePerformance = async (req, res, next) => {
 exports.getFactorsByIntent = async (req, res, next) => {
   try {
     const factors = await CheckoutFactor.getFactorsByIntent(
-      req.user.id,
+      req.user.merchant,
       req.params.intentType
     );
 
@@ -370,7 +370,7 @@ exports.getIntentPerformance = async (req, res, next) => {
     const stats = await CheckoutFactor.aggregate([
       {
         $match: {
-          merchant: req.user.id,
+          merchant: req.user.merchant,
           "intentStrategies.intentType": req.params.intentType,
           "intentStrategies.enabled": true,
         },
@@ -427,7 +427,7 @@ exports.createMultipleFactors = async (req, res, next) => {
   try {
     const factors = req.body.map((factor) => ({
       ...factor,
-      merchant: req.user.id,
+      merchant: req.user.merchant,
     }));
 
     const createdFactors = await CheckoutFactor.insertMany(factors);
@@ -448,7 +448,7 @@ exports.updateMultipleFactors = async (req, res, next) => {
   try {
     const updates = req.body.map(async ({ id, ...update }) => {
       return CheckoutFactor.findOneAndUpdate(
-        { _id: id, merchant: req.user.id },
+        { _id: id, merchant: req.user.merchant },
         update,
         { new: true, runValidators: true }
       );
@@ -474,7 +474,7 @@ exports.deleteMultipleFactors = async (req, res, next) => {
 
     const result = await CheckoutFactor.deleteMany({
       _id: { $in: ids },
-      merchant: req.user.id,
+      merchant: req.user.merchant,
     });
 
     res.status(200).json({

@@ -4,6 +4,11 @@ const jwt = require("jsonwebtoken");
 
 const merchantSchema = new mongoose.Schema(
   {
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: [true, "Owner is required"],
+    },
     name: {
       type: String,
       required: [true, "Please add a name"],

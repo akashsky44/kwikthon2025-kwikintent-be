@@ -10,7 +10,39 @@ module.exports = {
         content: {
           "application/json": {
             schema: {
-              $ref: "#/components/schemas/Configuration",
+              type: "object",
+              required: ["settings"],
+              properties: {
+                settings: {
+                  type: "object",
+                  required: ["widgetPlacement", "intentThresholds"],
+                  properties: {
+                    widgetPlacement: {
+                      type: "string",
+                      enum: ["below-price", "above-button"],
+                      example: "below-price",
+                    },
+                    intentThresholds: {
+                      type: "object",
+                      required: ["highIntent", "priceSensitive"],
+                      properties: {
+                        highIntent: {
+                          type: "number",
+                          minimum: 0,
+                          maximum: 100,
+                          example: 70,
+                        },
+                        priceSensitive: {
+                          type: "number",
+                          minimum: 0,
+                          maximum: 100,
+                          example: 50,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
             },
           },
         },
@@ -21,7 +53,66 @@ module.exports = {
           content: {
             "application/json": {
               schema: {
-                $ref: "#/components/schemas/Configuration",
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      _id: {
+                        type: "string",
+                        format: "objectId",
+                        example: "507f1f77bcf86cd799439011",
+                      },
+                      merchant: {
+                        type: "string",
+                        format: "objectId",
+                        example: "507f1f77bcf86cd799439011",
+                      },
+                      settings: {
+                        type: "object",
+                        properties: {
+                          widgetPlacement: {
+                            type: "string",
+                            example: "below-price",
+                          },
+                          intentThresholds: {
+                            type: "object",
+                            properties: {
+                              highIntent: {
+                                type: "number",
+                                example: 70,
+                              },
+                              priceSensitive: {
+                                type: "number",
+                                example: 50,
+                              },
+                            },
+                          },
+                        },
+                      },
+                      isActive: {
+                        type: "boolean",
+                        example: true,
+                      },
+                      version: {
+                        type: "number",
+                        example: 1,
+                      },
+                      createdAt: {
+                        type: "string",
+                        format: "date-time",
+                      },
+                      updatedAt: {
+                        type: "string",
+                        format: "date-time",
+                      },
+                    },
+                  },
+                },
               },
             },
           },
@@ -38,7 +129,60 @@ module.exports = {
           content: {
             "application/json": {
               schema: {
-                $ref: "#/components/schemas/Configuration",
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      _id: {
+                        type: "string",
+                        format: "objectId",
+                      },
+                      merchant: {
+                        type: "string",
+                        format: "objectId",
+                      },
+                      settings: {
+                        type: "object",
+                        properties: {
+                          widgetPlacement: {
+                            type: "string",
+                            enum: ["below-price", "above-button"],
+                          },
+                          intentThresholds: {
+                            type: "object",
+                            properties: {
+                              highIntent: {
+                                type: "number",
+                              },
+                              priceSensitive: {
+                                type: "number",
+                              },
+                            },
+                          },
+                        },
+                      },
+                      isActive: {
+                        type: "boolean",
+                      },
+                      version: {
+                        type: "number",
+                      },
+                      createdAt: {
+                        type: "string",
+                        format: "date-time",
+                      },
+                      updatedAt: {
+                        type: "string",
+                        format: "date-time",
+                      },
+                    },
+                  },
+                },
               },
             },
           },
@@ -57,9 +201,62 @@ module.exports = {
           content: {
             "application/json": {
               schema: {
-                type: "array",
-                items: {
-                  $ref: "#/components/schemas/Configuration",
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  data: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        _id: {
+                          type: "string",
+                          format: "objectId",
+                        },
+                        merchant: {
+                          type: "string",
+                          format: "objectId",
+                        },
+                        settings: {
+                          type: "object",
+                          properties: {
+                            widgetPlacement: {
+                              type: "string",
+                              enum: ["below-price", "above-button"],
+                            },
+                            intentThresholds: {
+                              type: "object",
+                              properties: {
+                                highIntent: {
+                                  type: "number",
+                                },
+                                priceSensitive: {
+                                  type: "number",
+                                },
+                              },
+                            },
+                          },
+                        },
+                        isActive: {
+                          type: "boolean",
+                        },
+                        version: {
+                          type: "number",
+                        },
+                        createdAt: {
+                          type: "string",
+                          format: "date-time",
+                        },
+                        updatedAt: {
+                          type: "string",
+                          format: "date-time",
+                        },
+                      },
+                    },
+                  },
                 },
               },
             },
@@ -90,7 +287,36 @@ module.exports = {
         content: {
           "application/json": {
             schema: {
-              $ref: "#/components/schemas/Configuration",
+              type: "object",
+              required: ["settings"],
+              properties: {
+                settings: {
+                  type: "object",
+                  required: ["widgetPlacement", "intentThresholds"],
+                  properties: {
+                    widgetPlacement: {
+                      type: "string",
+                      enum: ["below-price", "above-button"],
+                    },
+                    intentThresholds: {
+                      type: "object",
+                      required: ["highIntent", "priceSensitive"],
+                      properties: {
+                        highIntent: {
+                          type: "number",
+                          minimum: 0,
+                          maximum: 100,
+                        },
+                        priceSensitive: {
+                          type: "number",
+                          minimum: 0,
+                          maximum: 100,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
             },
           },
         },
@@ -101,7 +327,60 @@ module.exports = {
           content: {
             "application/json": {
               schema: {
-                $ref: "#/components/schemas/Configuration",
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      _id: {
+                        type: "string",
+                        format: "objectId",
+                      },
+                      merchant: {
+                        type: "string",
+                        format: "objectId",
+                      },
+                      settings: {
+                        type: "object",
+                        properties: {
+                          widgetPlacement: {
+                            type: "string",
+                            enum: ["below-price", "above-button"],
+                          },
+                          intentThresholds: {
+                            type: "object",
+                            properties: {
+                              highIntent: {
+                                type: "number",
+                              },
+                              priceSensitive: {
+                                type: "number",
+                              },
+                            },
+                          },
+                        },
+                      },
+                      isActive: {
+                        type: "boolean",
+                      },
+                      version: {
+                        type: "number",
+                      },
+                      createdAt: {
+                        type: "string",
+                        format: "date-time",
+                      },
+                      updatedAt: {
+                        type: "string",
+                        format: "date-time",
+                      },
+                    },
+                  },
+                },
               },
             },
           },
@@ -144,124 +423,10 @@ module.exports = {
       },
     },
   },
-  "/configuration/intent-rules": {
-    get: {
-      tags: ["Configuration"],
-      summary: "Get all intent rules configuration",
-      security: [{ bearerAuth: [] }],
-      responses: {
-        200: {
-          description: "Intent rules configuration",
-          content: {
-            "application/json": {
-              schema: {
-                type: "array",
-                items: {
-                  $ref: "#/components/schemas/IntentRule",
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  },
-  "/configuration/intent-rules/{type}": {
-    get: {
-      tags: ["Configuration"],
-      summary: "Get intent rules by type",
-      security: [{ bearerAuth: [] }],
-      parameters: [
-        {
-          in: "path",
-          name: "type",
-          required: true,
-          schema: {
-            type: "string",
-            enum: ["high-intent", "price-sensitive", "just-browsing"],
-          },
-          description: "Intent type",
-        },
-      ],
-      responses: {
-        200: {
-          description: "Intent rules for type",
-          content: {
-            "application/json": {
-              schema: {
-                $ref: "#/components/schemas/IntentRule",
-              },
-            },
-          },
-        },
-      },
-    },
-    put: {
-      tags: ["Configuration"],
-      summary: "Update intent rules for type",
-      security: [{ bearerAuth: [] }],
-      parameters: [
-        {
-          in: "path",
-          name: "type",
-          required: true,
-          schema: {
-            type: "string",
-            enum: ["high-intent", "price-sensitive", "just-browsing"],
-          },
-          description: "Intent type",
-        },
-      ],
-      requestBody: {
-        required: true,
-        content: {
-          "application/json": {
-            schema: {
-              $ref: "#/components/schemas/IntentRule",
-            },
-          },
-        },
-      },
-      responses: {
-        200: {
-          description: "Intent rules updated",
-          content: {
-            "application/json": {
-              schema: {
-                $ref: "#/components/schemas/IntentRule",
-              },
-            },
-          },
-        },
-      },
-    },
-  },
-  "/configuration/widget-settings": {
-    get: {
-      tags: ["Configuration"],
-      summary: "Get all widget settings",
-      security: [{ bearerAuth: [] }],
-      responses: {
-        200: {
-          description: "Widget settings",
-          content: {
-            "application/json": {
-              schema: {
-                type: "array",
-                items: {
-                  $ref: "#/components/schemas/Widget",
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  },
   "/configuration/export": {
     get: {
       tags: ["Configuration"],
-      summary: "Export complete configuration",
+      summary: "Export configuration",
       security: [{ bearerAuth: [] }],
       responses: {
         200: {
@@ -271,25 +436,33 @@ module.exports = {
               schema: {
                 type: "object",
                 properties: {
-                  configuration: {
-                    $ref: "#/components/schemas/Configuration",
+                  success: {
+                    type: "boolean",
+                    example: true,
                   },
-                  intentRules: {
-                    type: "array",
-                    items: {
-                      $ref: "#/components/schemas/IntentRule",
-                    },
-                  },
-                  widgetSettings: {
-                    type: "array",
-                    items: {
-                      $ref: "#/components/schemas/Widget",
-                    },
-                  },
-                  checkoutFactors: {
-                    type: "array",
-                    items: {
-                      $ref: "#/components/schemas/CheckoutFactor",
+                  data: {
+                    type: "object",
+                    properties: {
+                      settings: {
+                        type: "object",
+                        properties: {
+                          widgetPlacement: {
+                            type: "string",
+                            enum: ["below-price", "above-button"],
+                          },
+                          intentThresholds: {
+                            type: "object",
+                            properties: {
+                              highIntent: {
+                                type: "number",
+                              },
+                              priceSensitive: {
+                                type: "number",
+                              },
+                            },
+                          },
+                        },
+                      },
                     },
                   },
                 },
@@ -303,7 +476,7 @@ module.exports = {
   "/configuration/import": {
     post: {
       tags: ["Configuration"],
-      summary: "Import complete configuration",
+      summary: "Import configuration",
       security: [{ bearerAuth: [] }],
       requestBody: {
         required: true,
@@ -311,26 +484,32 @@ module.exports = {
           "application/json": {
             schema: {
               type: "object",
+              required: ["settings"],
               properties: {
-                configuration: {
-                  $ref: "#/components/schemas/Configuration",
-                },
-                intentRules: {
-                  type: "array",
-                  items: {
-                    $ref: "#/components/schemas/IntentRule",
-                  },
-                },
-                widgetSettings: {
-                  type: "array",
-                  items: {
-                    $ref: "#/components/schemas/Widget",
-                  },
-                },
-                checkoutFactors: {
-                  type: "array",
-                  items: {
-                    $ref: "#/components/schemas/CheckoutFactor",
+                settings: {
+                  type: "object",
+                  required: ["widgetPlacement", "intentThresholds"],
+                  properties: {
+                    widgetPlacement: {
+                      type: "string",
+                      enum: ["below-price", "above-button"],
+                    },
+                    intentThresholds: {
+                      type: "object",
+                      required: ["highIntent", "priceSensitive"],
+                      properties: {
+                        highIntent: {
+                          type: "number",
+                          minimum: 0,
+                          maximum: 100,
+                        },
+                        priceSensitive: {
+                          type: "number",
+                          minimum: 0,
+                          maximum: 100,
+                        },
+                      },
+                    },
                   },
                 },
               },
@@ -339,7 +518,7 @@ module.exports = {
         },
       },
       responses: {
-        200: {
+        201: {
           description: "Configuration imported",
           content: {
             "application/json": {
@@ -349,6 +528,35 @@ module.exports = {
                   success: {
                     type: "boolean",
                     example: true,
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      _id: {
+                        type: "string",
+                        format: "objectId",
+                      },
+                      settings: {
+                        type: "object",
+                        properties: {
+                          widgetPlacement: {
+                            type: "string",
+                            enum: ["below-price", "above-button"],
+                          },
+                          intentThresholds: {
+                            type: "object",
+                            properties: {
+                              highIntent: {
+                                type: "number",
+                              },
+                              priceSensitive: {
+                                type: "number",
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
                   },
                 },
               },
@@ -368,7 +576,36 @@ module.exports = {
         content: {
           "application/json": {
             schema: {
-              $ref: "#/components/schemas/Configuration",
+              type: "object",
+              required: ["settings"],
+              properties: {
+                settings: {
+                  type: "object",
+                  required: ["widgetPlacement", "intentThresholds"],
+                  properties: {
+                    widgetPlacement: {
+                      type: "string",
+                      enum: ["below-price", "above-button"],
+                    },
+                    intentThresholds: {
+                      type: "object",
+                      required: ["highIntent", "priceSensitive"],
+                      properties: {
+                        highIntent: {
+                          type: "number",
+                          minimum: 0,
+                          maximum: 100,
+                        },
+                        priceSensitive: {
+                          type: "number",
+                          minimum: 0,
+                          maximum: 100,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
             },
           },
         },
@@ -390,6 +627,7 @@ module.exports = {
                     items: {
                       type: "string",
                     },
+                    example: [],
                   },
                 },
               },
