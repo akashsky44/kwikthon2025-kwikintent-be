@@ -15,7 +15,15 @@ const widgetSchema = new mongoose.Schema(
     widgetType: {
       type: String,
       required: true,
-      enum: ["urgency", "discount", "social-proof", "recommendation"],
+      enum: [
+        "urgency",
+        "payment-options",
+        "bundle",
+        "information",
+        "discount",
+        "social-proof",
+        "recommendation",
+      ],
     },
     name: {
       type: String,
